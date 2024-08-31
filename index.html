@@ -35,34 +35,41 @@
                 return;
             }
 
-            // استبدل بـ Token البوت الخاص بك
-            const botToken = '7443158315:AAFpzzGdez00G16YrRvRh4LmxqONAsGIw_0';
-            // استبدل بـ معرف القناة الخاصة بك
-            const chatId = '@my2bot5files';
-            const url = `https://api.telegram.org/bot${botToken}/forwardMessage`;
+            // تأكد من تشغيل Telegram Web App
+            if (window.Telegram.WebApp) {
+                const chatId = window.Telegram.WebApp.initDataUnsafe.user.id; // معرف المستخدم من Telegram WebApp
 
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        chat_id: chatId,
-                        from_chat_id: chatId,
-                        message_id: parseInt(messageId, 10) // تأكد من تحويل المعرف إلى عدد صحيح
-                    })
-                });
+                // ضع الـ Token الخاص ببوتك هنا
+                const botToken = '7443158315:AAFpzzGdez00G16YrRvRh4LmxqONAsGIw_0';
+                // ضع معرف القناة التي ترغب في تحويل الرسائل منها
+                const channelId = '@my2bot5files';
+                const url = `https://api.telegram.org/bot${botToken}/forwardMessage`;
 
-                const data = await response.json();
-                if (data.ok) {
-                    alert('تم إرسال الرسالة بنجاح.');
-                } else {
-                    alert('حدث خطأ: ' + data.description);
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            chat_id: chatId,
+                            from_chat_id: channelId,
+                            message_id: parseInt(messageId, 10) // تأكد من تحويل المعرف إلى عدد صحيح
+                        })
+                    });
+
+                    const data = await response.json();
+                    if (data.ok) {
+                        alert('تم إرسال الرسالة بنجاح.');
+                    } else {
+                        alert('حدث خطأ: ' + data.description);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('حدث خطأ عند إرسال الرسالة.');
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('حدث خطأ عند إرسال الرسالة.');
+            } else {
+                alert('يرجى فتح هذه الصفحة من خلال Telegram Web App.');
             }
         }
     </script>
