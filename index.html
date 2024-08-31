@@ -35,8 +35,8 @@
                 return;
             }
 
-            // تأكد من تشغيل Telegram Web App
-            if (window.Telegram.WebApp) {
+            // التحقق من وجود Telegram WebApp
+            if (window.Telegram && window.Telegram.WebApp) {
                 const chatId = window.Telegram.WebApp.initDataUnsafe.user.id; // معرف المستخدم من Telegram WebApp
 
                 // ضع الـ Token الخاص ببوتك هنا
