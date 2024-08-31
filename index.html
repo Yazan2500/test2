@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Web App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        input {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>إرسال معرف الرسالة إلى البوت</h1>
+    <input type="text" id="messageId" placeholder="أدخل معرف الرسالة هنا" />
+    <button onclick="sendMessage()">إرسال</button>
+
+    <script>
+        function sendMessage() {
+            const messageId = document.getElementById('messageId').value;
+            if (!messageId) {
+                alert('يرجى إدخال معرف الرسالة');
+                return;
+            }
+
+            // استبدل هذا برابط البوت الخاص بك
+            const botToken = '7443158315:AAFpzzGdez00G16YrRvRh4LmxqONAsGIw_0';
+            const channelId = '@my2bot5files';
+            const url = `https://api.telegram.org/bot${botToken}/forwardMessage`;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    chat_id: channelId,
+                    from_chat_id: channelId,
+                    message_id: messageId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    alert('تم إرسال الرسالة بنجاح.');
+                } else {
+                    alert('حدث خطأ: ' + data.description);
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('حدث خطأ عند إرسال الرسالة.');
+            });
+        }
+    </script>
+</body>
+</html>
