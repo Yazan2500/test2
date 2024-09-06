@@ -1,77 +1,123 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إرسال رسالة إلى بوت Telegram</title>
+    <title>Telegram Web App</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
             text-align: center;
+            background: white;
             padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        input {
-            margin: 10px;
-            padding: 10px;
-            font-size: 16px;
+
+        h1 {
+            color: #333;
         }
-        button {
-            margin: 10px;
+
+        p {
+            color: #666;
+        }
+
+        .button {
             padding: 10px 20px;
             font-size: 16px;
+            cursor: pointer;
+            background-color: #0088cc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin: 10px;
+        }
+
+        .button:hover {
+            background-color: #0077b3;
+        }
+
+        .input-field {
+            padding: 10px;
+            font-size: 16px;
+            width: calc(100% - 24px);
+            margin: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
         }
     </style>
 </head>
 <body>
-    <h1>إرسال رسالة إلى بوت Telegram</h1>
-    <input type="text" id="messageId" placeholder="أدخل معرف الرسالة هنا" />
-    <button onclick="sendMessage()">إرسال</button>
+    <div class="container">
+        <h1>Telegram Web App</h1>
+        <p>Enter the message ID and click the button to send the message to your bot:</p>
+        <input type="text" id="messageIdInput" class="input-field" placeholder="Enter message ID">
+        <button class="button" id="sendMessage">Send Message</button>
+    </div>
 
     <script>
-        async function sendMessage() {
-            const messageId = document.getElementById('messageId').value;
-            if (!messageId) {
-                alert('يرجى إدخال معرف الرسالة');
-                return;
-            }
+        window.addEventListener('load', () => {
+            if (window.Telegram && window.Telegram.WebApps) {
+                window.Telegram.WebApps.ready();
 
-            // التحقق من وجود Telegram WebApp
-            if (window.Telegram && window.Telegram.WebApp) {
-                const chatId = window.Telegram.WebApp.initDataUnsafe.user.id; // معرف المستخدم من Telegram WebApp
+                document.getElementById('sendMessage').addEventListener('click', function() {
+                    // Get message ID from input field
+                    const messageId = document.getElementById('messageIdInput').value;
+                    if (messageId) {
+                        sendMessageToBot(messageId);
+                    } else {
+                        alert('Please enter a message ID');
+                    }
+                });
 
-                // ضع الـ Token الخاص ببوتك هنا
-                const botToken = '7443158315:AAFpzzGdez00G16YrRvRh4LmxqONAsGIw_0';
-                // ضع معرف القناة التي ترغب في تحويل الرسائل منها
-                const channelId = '@my2bot5files';
-                const url = `https://api.telegram.org/bot${botToken}/forwardMessage`;
+                // Extract user ID from Telegram Web Apps
+                const userId = window.Telegram.WebApps.initDataUnsafe.user.id;
 
-                try {
-                    const response = await fetch(url, {
+                // Function to send a message to the bot
+                function sendMessageToBot(messageId) {
+                    const botToken = '6895161149:AAFnWW_jSUzlyUxHD1A11qr3ArT77KbNEUs';
+                    const apiUrl = `https://api.telegram.org/bot${botToken}/forwardMessage`;
+
+                    // Message details
+                    const chatId = userId; // Using user ID as the chat ID
+
+                    fetch(apiUrl, {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json',
+                            'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
                             chat_id: chatId,
-                            from_chat_id: channelId,
-                            message_id: parseInt(messageId, 10) // تأكد من تحويل المعرف إلى عدد صحيح
+                            from_chat_id: '@my2bot5files', // Replace with the channel ID
+                            message_id: messageId
                         })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.ok) {
+                            alert('Message sent successfully!');
+                        } else {
+                            alert('Failed to send message');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error sending message');
                     });
-
-                    const data = await response.json();
-                    if (data.ok) {
-                        alert('تم إرسال الرسالة بنجاح.');
-                    } else {
-                        alert('حدث خطأ: ' + data.description);
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('حدث خطأ عند إرسال الرسالة.');
                 }
             } else {
-                alert('يرجى فتح هذه الصفحة من خلال Telegram Web App.');
+                console.error('Telegram WebApps API is not available');
             }
-        }
+        });
     </script>
 </body>
 </html>
